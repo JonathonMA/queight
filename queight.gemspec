@@ -9,9 +9,9 @@ Gem::Specification.new do |spec|
   spec.authors       = ["Jonathon M. Abbott"]
   spec.email         = ["jma@dandaraga.net"]
 
-  spec.summary       = "TODO: Write a short summary, because Rubygems requires one."
-  spec.description   = "TODO: Write a longer description or delete this line."
-  spec.homepage      = "TODO: Put your gem's website or public repo URL here."
+  spec.summary       = "a lightweight wrapper around bunny"
+  spec.description   = spec.summary
+  spec.homepage      = "http://github.com/JonathonMA/queight"
   spec.license       = "MIT"
 
   # Prevent pushing this gem to RubyGems.org by setting 'allowed_push_host', or
@@ -31,4 +31,10 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "rake", "~> 10.0"
   spec.add_development_dependency "rspec"
   spec.add_development_dependency "rubocop"
+
+  spec.add_development_dependency "dotenv"
+
+  spec.add_dependency "connection_pool"
+  spec.add_dependency "bunny"
+  spec.add_dependency "uri_config"
 end
