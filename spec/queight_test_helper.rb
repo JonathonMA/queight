@@ -46,7 +46,7 @@ class QueightTestHelper
     buf
   end
 
-  def wait_for_messages(queue, timeout: 0.5)
+  def wait_for_messages(queue, timeout = 0.5)
     @client.with_channel do |ch|
       q = queue.queue(ch)
       start = Time.new
@@ -57,7 +57,7 @@ class QueightTestHelper
     end
   end
 
-  def wait_for_no_messages(queue, timeout: 0.5)
+  def wait_for_no_messages(queue, timeout = 0.5)
     @client.with_channel do |ch|
       q = queue.queue(ch)
       start = Time.new

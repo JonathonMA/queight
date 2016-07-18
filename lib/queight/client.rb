@@ -23,7 +23,7 @@ module Queight
     end
 
     # TODO: subscribe, sudddenly, a wild prefetch appears
-    def subscribe(queue, prefetch: 1, &block)
+    def subscribe(queue, prefetch = 1, &block)
       with_subscribe_channel(prefetch) do |channel|
         queue.subscribe(channel, &block)
       end
