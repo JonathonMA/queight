@@ -28,13 +28,16 @@ Gem::Specification.new do |spec|
   spec.require_paths = ["lib"]
 
   spec.add_development_dependency "bundler", "~> 1.10"
+  spec.add_development_dependency "dotenv"
   spec.add_development_dependency "rake", "~> 10.0"
   spec.add_development_dependency "rspec"
-  spec.add_development_dependency "rubocop"
+  spec.add_development_dependency "rubocop" if RUBY_VERSION >= "1.9"
 
-  spec.add_development_dependency "dotenv"
-
+  if RUBY_VERSION < "2.0"
+    spec.add_dependency "bunny", "~> 1.7"
+  else
+    spec.add_dependency "bunny"
+  end
   spec.add_dependency "connection_pool"
-  spec.add_dependency "bunny"
   spec.add_dependency "uri_config"
 end
