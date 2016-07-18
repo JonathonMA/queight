@@ -30,6 +30,13 @@ First configure your environment:
 
     RABBITMQ_URL=amqp://username:password@hostname:port
 
+You can use the following query parameters to further customize behaviour:
+
+| parameter | effect                |
+| --------- | --------------------- |
+| size      | connection pool size  |
+| id        | client identification |
+
 Then you can get a Queight client:
 
     client = Queight.current
