@@ -8,6 +8,8 @@ module Queight
       query["size"].map(&:to_i).last
     end
 
-    config :user, :password, :port, :host, :size
+    parameter :id
+
+    config :user, :password, :port, :host, :size, :id
   end
 end

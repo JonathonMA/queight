@@ -30,7 +30,7 @@ module Queight
     private
 
     def conn
-      @conn ||= Bunny.new(@options).tap(&:start)
+      @conn ||= Bunny.new(bunny_options).tap(&:start)
     end
 
     def connection_pool
@@ -42,6 +42,14 @@ module Queight
     def build_wrapper
       @wrappers << ChannelWrapper.new(conn.create_channel)
       @wrappers.last
+    end
+
+    def bunny_options
+      @options.merge(
+        properties: {
+          information: @options.fetch(:id, "Queight (anonymous)"),
+        },
+      )
     end
 
     def connection_pool_options
