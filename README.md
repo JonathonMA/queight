@@ -1,8 +1,12 @@
 # Queight
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/queight`. To experiment with that code, run `bin/console` for an interactive prompt.
+This is a lightweight wrapper around the `bunny` gem. It tries to handle caching the rabbitmq connection and channels in a sensible way:
 
-TODO: Delete this and the text above, and describe your gem
+- The main connection is cached globally.
+- Channels are allocated from a pool since they are not thread safe.
+- Channels for subscribers are allocated one-off and specify a prefetch.
+
+This matches our normal usage of rabbitmq, with publishing happening constantly throughout usage, while subscription is usually a dedicated process.
 
 ## Installation
 
@@ -22,9 +26,68 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+First configure your environment:
+
+    RABBITMQ_URL=amqp://username:password@hostname:port
+
+Then you can get a Queight client:
+
+    client = Queight.current
+
+In order to publish messages you'll need an exchange:
+
+    topic_exchange = Queight.topic "exchange.topic"
+    direct_exchange = Queight.direct "exchange.direct"
+
+And in order to subscribe to queues you'll need a queue:
+
+    queue = Queight.queue("queue.name")
+
+Then you can just publish messages using the client and the exchange:
+
+    client.publish(topic_exchange, "message", "routing.key")
+
+### Publishing to a topic exchange
+
+```ruby
+exchange = Queight.topic("test.exchange.topic")
+message = JSON.dump(id: 1, message: "hello")
+routing_key = "message.1"
+client.publish(exchange, message, routing_key)
+queue = Queight.queue("test.queue1")
+
+client = Queight.current
+```
+
+### Binding queues
+
+```ruby
+exchange = Queight.topic("exchange.name")
+# Declare a queue and routing patterns
+queue = Queight.queue("queue.name", "message.#", "reply.#")
+client.bind(exchange, queue)
+```
+
+### Subscribing to messages from a queue
+
+Subscribing by default will block and require manual ack.
+
+``` ruby
+client.subscribe(queue) do |channel, delivery_info, properties, payload|
+  do_something(payload)
+  channel.acknowledge(delivery_info.delivery_tag)
+end
+```
 
 ## Development
+
+The `.env` file assumes a rabbitmq running on localhost with a username and password of guest. The provided docker-compose.yml let's you run one with:
+
+    docker-compose up -d
+
+If your docker does not expose ports on localhost you may need to override this, e.g. dinghy on OS X should override in `.env.local` with:
+
+    RABBITMQ_URL=amqp://guest:guest@queight-rabbitmq-1.docker
 
 After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
 
