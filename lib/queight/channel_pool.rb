@@ -48,7 +48,7 @@ module Queight
       @options.merge(
         :properties => {
           :information => @options.fetch(:id, "Queight (anonymous)"),
-        },
+        }
       )
     end
 

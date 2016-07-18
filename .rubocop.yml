@@ -10,3 +10,7 @@ Style/RescueModifier:
 # 1.8 compatible :(
 Style/HashSyntax:
   EnforcedStyle: hash_rockets
+
+# 1.8 compatible :(
+Style/TrailingCommaInArguments:
+  EnforcedStyleForMultiline: no_comma
