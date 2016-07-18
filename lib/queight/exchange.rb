@@ -4,8 +4,8 @@ module Queight
       @type = type
       @name = name
       @message_options = {
-        content_type: "application/json",
-        persistent: true,
+        :content_type => "application/json",
+        :persistent => true,
       }.merge(message_options)
     end
 
@@ -25,14 +25,14 @@ module Queight
 
     def exchange_options
       {
-        durable: true,
-        auto_delete: false,
-        type: @type,
+        :durable => true,
+        :auto_delete => false,
+        :type => @type,
       }
     end
 
     def message_options_for(routing_key)
-      @message_options.merge(routing_key: routing_key)
+      @message_options.merge(:routing_key => routing_key)
     end
   end
 end

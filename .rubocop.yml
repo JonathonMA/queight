@@ -6,3 +6,7 @@ Style/FrozenStringLiteralComment:
 
 Style/RescueModifier:
   Enabled: false
+
+# 1.8 compatible :(
+Style/HashSyntax:
+  EnforcedStyle: hash_rockets

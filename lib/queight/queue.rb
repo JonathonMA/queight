@@ -10,7 +10,7 @@ module Queight
       queue = queue(channel)
       if @routing_patterns.any?
         @routing_patterns.each do |routing_pattern|
-          queue.bind(exchange, routing_key: routing_pattern)
+          queue.bind(exchange, :routing_key => routing_pattern)
         end
       else
         queue.bind(exchange)
@@ -36,14 +36,14 @@ module Queight
 
     def subscribe_options
       {
-        block: true,
-        manual_ack: true,
+        :block => true,
+        :manual_ack => true,
       }
     end
 
     def queue_options
       {
-        auto_delete: false,
+        :auto_delete => false,
       }
     end
   end

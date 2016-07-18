@@ -46,15 +46,15 @@ module Queight
 
     def bunny_options
       @options.merge(
-        properties: {
-          information: @options.fetch(:id, "Queight (anonymous)"),
+        :properties => {
+          :information => @options.fetch(:id, "Queight (anonymous)"),
         },
       )
     end
 
     def connection_pool_options
       {
-        size: @options.fetch(:size, DEFAULT_POOL_SIZE),
+        :size => @options.fetch(:size, DEFAULT_POOL_SIZE),
       }
     end
   end

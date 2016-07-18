@@ -33,7 +33,7 @@ describe Queight do
     routing_key = "test.routing.key"
     queue_name = "test.queue.direct"
     messages = [
-      [routing_key, message(foo: "bar")],
+      [routing_key, message(:foo => "bar")],
     ]
     exchange = test_helper.topic(Queight.direct("test.exchange.direct"))
     queues = [
@@ -49,7 +49,7 @@ describe Queight do
   it "supports fanout queues" do
     routing_key = "is.irrelevant"
     messages = [
-      [routing_key, message(foo: "bar")],
+      [routing_key, message(:foo => "bar")],
     ]
     exchange = test_helper.topic(Queight.fanout("test.exchange.fanout"))
     queues = [
@@ -71,7 +71,7 @@ describe Queight do
       test.message.ie
       test.message.us
     ).map do |key|
-      [key, message(message: key)]
+      [key, message(:message => key)]
     end
     routing_keys = messages.map(&:first)
     exchange = test_helper.topic(Queight.topic("test.exchange.topic"))
@@ -129,7 +129,7 @@ describe Queight do
       test.message.ie
       test.message.us
     ).map do |key|
-      [key, message(message: key)]
+      [key, message(:message => key)]
     end
     routing_keys = messages.map(&:first)
     exchange = test_helper.topic(Queight.direct("test.exchange.topic"))
