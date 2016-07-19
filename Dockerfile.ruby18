@@ -1,0 +1,11 @@
+FROM kneip/ree-1.8.7-2012.02
+
+ENV GEM_HOME /usr/local/bundle
+ENV PATH $GEM_HOME/bin:$PATH
+
+RUN \
+  gem update --system && \
+  gem install bundler -v '~> 1.12.5' && \
+  bundle config --global path "$GEM_HOME" && \
+  bundle config --global bin "$GEM_HOME/bin" && \
+  true

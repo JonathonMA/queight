@@ -1,7 +1,24 @@
 version: '2'
 
+volumes:
+  bundle:
+    driver: local
+
 services:
   rabbitmq:
     image: rabbitmq:3.6
     ports:
       - 5672:5672
+  ruby18:
+    build:
+      context: .
+      dockerfile: Dockerfile.ruby18
+    links:
+      - rabbitmq
+    volumes:
+      - bundle:/usr/local/bundle
+      - .:/srv/app
+    working_dir: /srv/app
+    environment:
+      - RABBITMQ_URL=amqp://guest:guest@rabbitmq?id=foo&size=10
+    command: bundle exec rake
