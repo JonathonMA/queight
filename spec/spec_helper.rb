@@ -7,7 +7,7 @@ def message(obj)
   JSON.dump(obj)
 end
 
-require_relative "queight_test_helper"
+require "queight_test_helper"
 
 Dotenv.load(".env.local")
 Dotenv.load
