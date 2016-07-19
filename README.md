@@ -1,5 +1,7 @@
 # Queight
 
+[![Build Status](https://travis-ci.org/JonathonMA/queight.svg?branch=master)](https://travis-ci.org/JonathonMA/queight)
+
 This is a lightweight wrapper around the `bunny` gem. It tries to handle caching the rabbitmq connection and channels in a sensible way:
 
 - The main connection is cached globally.
