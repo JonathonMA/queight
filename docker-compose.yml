@@ -1,7 +1,9 @@
 version: '2'
 
 volumes:
-  bundle:
+  bundle18:
+    driver: local
+  bundle23:
     driver: local
 
 services:
@@ -16,7 +18,18 @@ services:
     links:
       - rabbitmq
     volumes:
-      - bundle:/usr/local/bundle
+      - bundle18:/usr/local/bundle
+      - .:/srv/app
+    working_dir: /srv/app
+    environment:
+      - RABBITMQ_URL=amqp://guest:guest@rabbitmq?id=foo&size=10
+    command: bundle exec rake
+  ruby23:
+    image: ruby:2.3.1
+    links:
+      - rabbitmq
+    volumes:
+      - bundle23:/usr/local/bundle
       - .:/srv/app
     working_dir: /srv/app
     environment:
