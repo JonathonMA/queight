@@ -29,9 +29,9 @@ class QueightTestHelper
   end
 
   def messages_from(*queues)
-    queues.flat_map do |queue|
+    queues.map do |queue|
       messages_from_queue(queue)
-    end
+    end.flatten
   end
 
   def messages_from_queue(queue)
