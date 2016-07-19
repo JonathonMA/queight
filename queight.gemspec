@@ -39,5 +39,5 @@ Gem::Specification.new do |spec|
     spec.add_dependency "bunny"
   end
   spec.add_dependency "connection_pool"
-  spec.add_dependency "uri_config"
+  spec.add_dependency "uri_config", "~> 0.0.11"
 end
