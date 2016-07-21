@@ -56,6 +56,10 @@ Then you can just publish messages using the client and the exchange:
 
     client.publish(topic_exchange, "message", "routing.key")
 
+Note that publishing uses transactions by default (slow!), so if you're ok with messages hitting the floor and not knowing about it, try:
+
+    client.publish_without_transaction(topic_exchange, "message", "routing.key")
+
 ### Publishing to a topic exchange
 
 ```ruby

@@ -1,12 +1,8 @@
-require "forwardable"
-
 module Queight
   # Adds memoization of exchanges etc.
-  class ChannelWrapper
-    extend Forwardable
-
+  class ChannelWrapper < SimpleDelegator
     def initialize(channel)
-      @channel = channel
+      super(channel)
       reset_cache!
     end
 
@@ -14,10 +10,8 @@ module Queight
       @exchange_cache = {}
     end
 
-    def_delegators :@channel, :queue
-
     def exchange(*args)
-      @exchange_cache[args] ||= @channel.exchange(*args)
+      @exchange_cache[args] ||= super
     end
   end
 end

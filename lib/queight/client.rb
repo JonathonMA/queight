@@ -1,5 +1,7 @@
 module Queight
   class Client
+    PublishFailure = Class.new(StandardError)
+
     def initialize(channel_pool)
       @channel_pool = channel_pool
     end
@@ -16,9 +18,17 @@ module Queight
       end
     end
 
-    def publish(config, message, routing_key)
+    def publish_without_transaction(config, message, routing_key)
       with_channel do |channel|
         config.publish(channel, message, routing_key)
+      end
+    end
+
+    def publish(exchange, message, routing_key)
+      with_channel do |channel|
+        channel.tx_select
+        exchange.publish(channel, message, routing_key)
+        raise PublishFailure unless channel.tx_commit
       end
     end
 
