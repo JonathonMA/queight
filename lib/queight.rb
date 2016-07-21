@@ -8,8 +8,8 @@ require "queight/rabbitmq_config"
 module Queight
   GlobalConnectionCache = ConnectionCache.new
 
-  def self.queue(name, *routing_patterns)
-    Queue.new(name, *routing_patterns)
+  def self.queue(name, options = {})
+    Queue.new(name, options)
   end
 
   def self.topic(name, message_options = {})

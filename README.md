@@ -73,7 +73,7 @@ client = Queight.current
 ```ruby
 exchange = Queight.topic("exchange.name")
 # Declare a queue and routing patterns
-queue = Queight.queue("queue.name", "message.#", "reply.#")
+queue = Queight.queue("queue.name", routing: ["message.#", "reply.#"])
 client.bind(exchange, queue)
 ```
 

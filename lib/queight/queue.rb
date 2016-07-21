@@ -1,8 +1,9 @@
 module Queight
   class Queue
-    def initialize(name, *routing_patterns)
+    def initialize(name, options = {})
       @name = name
-      @routing_patterns = routing_patterns
+      @routing_patterns = Array(options.delete(:routing))
+      @queue_options = options
     end
 
     def bind_to(channel, exchange_config)
@@ -44,7 +45,7 @@ module Queight
     def queue_options
       {
         :auto_delete => false,
-      }
+      }.merge(@queue_options)
     end
   end
 end

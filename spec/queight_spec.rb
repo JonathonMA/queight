@@ -37,7 +37,7 @@ describe Queight do
     ]
     exchange = test_helper.topic(Queight.direct("test.exchange.direct"))
     queues = [
-      test_helper.queue(Queight.queue(queue_name, routing_key)),
+      test_helper.queue(Queight.queue(queue_name, :routing => routing_key)),
     ]
 
     exercise(client, exchange, queues, messages)
@@ -76,7 +76,7 @@ describe Queight do
     routing_keys = messages.map(&:first)
     exchange = test_helper.topic(Queight.topic("test.exchange.topic"))
     queues = [
-      test_helper.queue(Queight.queue("test.queue1", *routing_keys)),
+      test_helper.queue(Queight.queue("test.queue1", :routing => routing_keys)),
     ]
 
     exercise(client, exchange, queues, messages)
@@ -95,7 +95,7 @@ describe Queight do
     end.shuffle
     exchange = test_helper.topic(Queight.direct("test.exchange.threads"))
     queues = [
-      test_helper.queue(Queight.queue("test.queue1", routing_key)),
+      test_helper.queue(Queight.queue("test.queue1", :routing => routing_key)),
     ]
 
     queues.each do |queue|
@@ -134,7 +134,7 @@ describe Queight do
     routing_keys = messages.map(&:first)
     exchange = test_helper.topic(Queight.direct("test.exchange.topic"))
     queues = [
-      test_helper.queue(Queight.queue("test.queue1", *routing_keys)),
+      test_helper.queue(Queight.queue("test.queue1", :routing => routing_keys)),
     ]
 
     exercise(client, exchange, queues, messages)
