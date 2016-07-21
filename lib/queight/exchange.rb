@@ -25,8 +25,8 @@ module Queight
 
     def exchange_options
       {
-        :durable => true,
         :auto_delete => false,
+        :durable => true,
         :type => @type,
       }
     end

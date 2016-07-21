@@ -45,6 +45,8 @@ module Queight
     def queue_options
       {
         :auto_delete => false,
+        :durable => true,
+        :exclusive => false,
       }.merge(@queue_options)
     end
   end
