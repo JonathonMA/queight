@@ -142,9 +142,10 @@ describe Queight do
     result = []
     # NOTE: this thread will live forever, :(
     Thread.new do
-      client.subscribe(queues[0]) do |channel, delivery_info, _, payload|
+      client.subscribe(queues[0]) do |channel, delivery_info, props, payload|
+        metadata = Queight::Metadata.new(channel, delivery_info, props)
         result << payload
-        channel.acknowledge(delivery_info.delivery_tag)
+        metadata.ack
       end
     end
     test_helper.wait_for_no_messages(queues[0])

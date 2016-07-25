@@ -4,6 +4,7 @@ require "queight/connection_cache"
 require "queight/exchange"
 require "queight/queue"
 require "queight/rabbitmq_config"
+require "queight/metadata"
 
 module Queight
   GlobalConnectionCache = ConnectionCache.new
