@@ -54,7 +54,6 @@ module Queight
     end
     alias publish_to_queue! publish_to_queue_without_transaction
 
-    # TODO: subscribe, sudddenly, a wild prefetch appears
     def subscribe(queue, prefetch = 1, &block)
       with_subscribe_channel(prefetch) do |channel|
         queue.subscribe(channel, &block)
