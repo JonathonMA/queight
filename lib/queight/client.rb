@@ -32,9 +32,9 @@ module Queight
       end
     end
 
-    def publish_without_transaction(config, message, routing_key)
+    def publish_without_transaction(exchange, message, routing_key)
       with_channel do |channel|
-        config.publish(channel, message, routing_key)
+        exchange.publish(channel, message, routing_key)
       end
     end
     alias publish! publish_without_transaction
@@ -72,9 +72,9 @@ module Queight
       end
     end
 
-    def delete_exchange(config)
+    def delete_exchange(exchange)
       with_channel do |channel|
-        config.delete(channel)
+        exchange.delete(channel)
       end
     end
   end
