@@ -3,14 +3,14 @@ require "spec_helper"
 require "queight"
 require "thread"
 
-def exercise(client, exchange, queues, messages)
+def exercise(client, exchange, queues, messages, publish_method = :publish)
   queues.each do |queue|
     client.declare(queue)
     client.bind(exchange, queue)
   end
 
   messages.each do |routing_key, message|
-    client.publish(exchange, message, routing_key)
+    client.send(publish_method, exchange, message, routing_key)
   end
 
   queues.each do |queue|
@@ -30,78 +30,84 @@ describe Queight do
     test_helper.cleanup
   end
 
-  it "supports the default exchange" do
-    queue_name = "test.queue.direct.via_default"
-    routing_key = queue_name
-    messages = [
-      [routing_key, message(:foo => "bar")],
-    ]
-    exchange = Queight.default_exchange
-    queues = [
-      test_helper.queue(Queight.queue(queue_name)),
-    ]
+  %w(publish publish!).each do |publish_method|
+    describe "##{publish_method}" do
+      it "supports the default exchange" do
+        queue_name = "test.queue.direct.via_default"
+        routing_key = queue_name
+        messages = [
+          [routing_key, message(:foo => "bar")],
+        ]
+        exchange = Queight.default_exchange
+        queues = [
+          test_helper.queue(Queight.queue(queue_name)),
+        ]
 
-    exercise(client, exchange, queues, messages)
-    result = test_helper.messages_from(*queues)
+        exercise(client, exchange, queues, messages, publish_method)
+        result = test_helper.messages_from(*queues)
 
-    expect(result).to eq messages.map(&:last)
-  end
+        expect(result).to eq messages.map(&:last)
+      end
 
-  it "supports direct queues" do
-    routing_key = "test.routing.key"
-    queue_name = "test.queue.direct"
-    messages = [
-      [routing_key, message(:foo => "bar")],
-    ]
-    exchange = test_helper.topic(Queight.direct("test.exchange.direct"))
-    queues = [
-      test_helper.queue(Queight.queue(queue_name, :routing => routing_key)),
-    ]
+      it "supports direct queues" do
+        routing_key = "test.routing.key"
+        queue_name = "test.queue.direct"
+        messages = [
+          [routing_key, message(:foo => "bar")],
+        ]
+        exchange = test_helper.topic(Queight.direct("test.exchange.direct"))
+        queues = [
+          test_helper.queue(Queight.queue(queue_name, :routing => routing_key)),
+        ]
 
-    exercise(client, exchange, queues, messages)
-    result = test_helper.messages_from(*queues)
+        exercise(client, exchange, queues, messages, publish_method)
+        result = test_helper.messages_from(*queues)
 
-    expect(result).to eq messages.map(&:last)
-  end
+        expect(result).to eq messages.map(&:last)
+      end
 
-  it "supports fanout queues" do
-    routing_key = "is.irrelevant"
-    messages = [
-      [routing_key, message(:foo => "bar")],
-    ]
-    exchange = test_helper.topic(Queight.fanout("test.exchange.fanout"))
-    queues = [
-      test_helper.queue(Queight.queue("test.queue1")),
-      test_helper.queue(Queight.queue("test.queue2")),
-    ]
+      it "supports fanout queues" do
+        routing_key = "is.irrelevant"
+        messages = [
+          [routing_key, message(:foo => "bar")],
+        ]
+        exchange = test_helper.topic(Queight.fanout("test.exchange.fanout"))
+        queues = [
+          test_helper.queue(Queight.queue("test.queue1")),
+          test_helper.queue(Queight.queue("test.queue2")),
+        ]
 
-    exercise(client, exchange, queues, messages)
-    result = test_helper.messages_from(*queues)
+        exercise(client, exchange, queues, messages, publish_method)
+        result = test_helper.messages_from(*queues)
 
-    expect(result).to eq(messages.map(&:last) * 2)
-  end
+        expect(result).to eq(messages.map(&:last) * 2)
+      end
 
-  it "supports topic queues" do
-    messages = %w(
-      test.message.au
-      test.message.nz
-      test.message.gb
-      test.message.ie
-      test.message.us
-    ).map do |key|
-      [key, message(:message => key)]
+      it "supports topic queues" do
+        messages = %w(
+          test.message.au
+          test.message.nz
+          test.message.gb
+          test.message.ie
+          test.message.us
+        ).map do |key|
+          [key, message(:message => key)]
+        end
+        routing_keys = messages.map(&:first)
+        exchange = test_helper.topic(Queight.topic("test.exchange.topic"))
+        queues = [
+          test_helper.queue(
+            Queight.queue("test.queue1", :routing => routing_keys)
+          ),
+        ]
+
+        exercise(client, exchange, queues, messages, publish_method)
+
+        result = test_helper.messages_from(*queues)
+
+        expect(result).to eq messages.map(&:last)
+      end
     end
-    routing_keys = messages.map(&:first)
-    exchange = test_helper.topic(Queight.topic("test.exchange.topic"))
-    queues = [
-      test_helper.queue(Queight.queue("test.queue1", :routing => routing_keys)),
-    ]
-
-    exercise(client, exchange, queues, messages)
-
-    result = test_helper.messages_from(*queues)
-
-    expect(result).to eq messages.map(&:last)
   end
 
   it "is thread safe" do
@@ -176,7 +182,7 @@ describe Queight do
     queue = test_helper.queue(Queight.queue(queue_name))
     message = message(:foo => "bar")
 
-    client.publish_to_queue(message, queue)
+    client.publish_to_queue!(message, queue)
     test_helper.wait_for_messages(queue)
     result = test_helper.messages_from(queue)
 
