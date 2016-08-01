@@ -6,16 +6,10 @@ module Queight
       @queue_options = options
     end
 
-    def bind_to(channel, exchange_config)
-      exchange = exchange_config.exchange(channel)
-      queue = queue(channel)
-      if @routing_patterns.any?
-        @routing_patterns.each do |routing_pattern|
-          queue.bind(exchange, :routing_key => routing_pattern)
-        end
-      else
-        queue.bind(exchange)
-      end
+    attr_reader :routing_patterns, :name
+
+    def declare(channel)
+      queue(channel)
     end
 
     def subscribe(channel)

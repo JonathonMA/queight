@@ -13,6 +13,10 @@ module Queight
     Queue.new(name, options)
   end
 
+  def self.default_exchange(message_options = {})
+    DefaultExchange.new(message_options)
+  end
+
   def self.topic(name, message_options = {})
     Exchange.new(:topic, name, message_options)
   end

@@ -5,6 +5,7 @@ require "thread"
 
 def exercise(client, exchange, queues, messages)
   queues.each do |queue|
+    client.declare(queue)
     client.bind(exchange, queue)
   end
 
@@ -27,6 +28,23 @@ describe Queight do
 
   after(:each) do
     test_helper.cleanup
+  end
+
+  it "supports the default exchange" do
+    queue_name = "test.queue.direct.via_default"
+    routing_key = queue_name
+    messages = [
+      [routing_key, message(:foo => "bar")],
+    ]
+    exchange = Queight.default_exchange
+    queues = [
+      test_helper.queue(Queight.queue(queue_name)),
+    ]
+
+    exercise(client, exchange, queues, messages)
+    result = test_helper.messages_from(*queues)
+
+    expect(result).to eq messages.map(&:last)
   end
 
   it "supports direct queues" do
@@ -151,5 +169,17 @@ describe Queight do
     test_helper.wait_for_no_messages(queues[0])
 
     expect(result).to eq messages.map(&:last)
+  end
+
+  it "#publish_to_queue publishes via the default exchange" do
+    queue_name = "test.queue.direct.via_default"
+    queue = test_helper.queue(Queight.queue(queue_name))
+    message = message(:foo => "bar")
+
+    client.publish_to_queue(message, queue)
+    test_helper.wait_for_messages(queue)
+    result = test_helper.messages_from(queue)
+
+    expect(result).to eq [message]
   end
 end

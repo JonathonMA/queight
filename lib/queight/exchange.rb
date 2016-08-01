@@ -21,6 +21,19 @@ module Queight
       channel.exchange(@name, exchange_options).delete
     end
 
+    def bind(channel, queue)
+      if queue.routing_patterns.any?
+        queue.routing_patterns.each do |routing_pattern|
+          queue.queue(channel).bind(
+            exchange(channel),
+            :routing_key => routing_pattern
+          )
+        end
+      else
+        queue.queue(channel).bind(exchange(channel))
+      end
+    end
+
     private
 
     def exchange_options
@@ -33,6 +46,22 @@ module Queight
 
     def message_options_for(routing_key)
       @message_options.merge(:routing_key => routing_key)
+    end
+  end
+
+  class DefaultExchange < Exchange
+    def initialize(message_options = {})
+      super(nil, nil, message_options)
+    end
+
+    def delete(_channel)
+    end
+
+    def bind(_channel, _queue)
+    end
+
+    def exchange(channel)
+      channel.default_exchange
     end
   end
 end
