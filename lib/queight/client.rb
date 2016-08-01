@@ -24,12 +24,6 @@ module Queight
       end
     end
 
-    def publish_without_transaction(config, message, routing_key)
-      with_channel do |channel|
-        config.publish(channel, message, routing_key)
-      end
-    end
-
     def publish(exchange, message, routing_key)
       with_channel do |channel|
         channel.tx_select
@@ -37,6 +31,13 @@ module Queight
         raise PublishFailure unless channel.tx_commit
       end
     end
+
+    def publish_without_transaction(config, message, routing_key)
+      with_channel do |channel|
+        config.publish(channel, message, routing_key)
+      end
+    end
+    alias publish! publish_without_transaction
 
     def publish_to_queue(message, queue, message_options = {})
       declare(queue)
@@ -51,6 +52,7 @@ module Queight
         queue.name
       )
     end
+    alias publish_to_queue! publish_to_queue_without_transaction
 
     # TODO: subscribe, sudddenly, a wild prefetch appears
     def subscribe(queue, prefetch = 1, &block)
