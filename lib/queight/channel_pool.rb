@@ -12,11 +12,11 @@ module Queight
     end
 
     def with_channel
-      connection_pool.run { |channel| yield(channel) }
+      channel_pool.run { |channel| yield(channel) }
     end
 
     def with_transactional_channel
-      transactional_connection_pool.run { |channel| yield(channel) }
+      transactional_channel_pool.run { |channel| yield(channel) }
     end
 
     def with_subscribe_channel(prefetch)
@@ -37,12 +37,12 @@ module Queight
       @conn ||= Bunny.new(bunny_options).tap(&:start)
     end
 
-    def transactional_connection_pool
-      @tx_connection_pool ||= HotTub::Pool.new(pool_options) { build_wrapper }
+    def transactional_channel_pool
+      @tx_channel_pool ||= HotTub::Pool.new(pool_options) { build_wrapper }
     end
 
-    def connection_pool
-      @connection_pool ||= HotTub::Pool.new(pool_options) { build_wrapper }
+    def channel_pool
+      @channel_pool ||= HotTub::Pool.new(pool_options) { build_wrapper }
     end
 
     def build_wrapper
