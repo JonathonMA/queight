@@ -12,6 +12,12 @@ module Queight
       end
     end
 
+    def with_transactional_channel
+      @channel_pool.with_transactional_channel do |channel|
+        yield(channel)
+      end
+    end
+
     def with_subscribe_channel(prefetch)
       @channel_pool.with_subscribe_channel(prefetch) do |channel|
         yield(channel)
@@ -25,7 +31,7 @@ module Queight
     end
 
     def publish(exchange, message, routing_key)
-      with_channel do |channel|
+      with_transactional_channel do |channel|
         channel.tx_select
         exchange.publish(channel, message, routing_key)
         raise PublishFailure unless channel.tx_commit

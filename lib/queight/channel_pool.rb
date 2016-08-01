@@ -15,6 +15,10 @@ module Queight
       connection_pool.run { |channel| yield(channel) }
     end
 
+    def with_transactional_channel
+      transactional_connection_pool.run { |channel| yield(channel) }
+    end
+
     def with_subscribe_channel(prefetch)
       conn.create_channel.tap do |channel|
         channel.prefetch(prefetch)
@@ -31,6 +35,10 @@ module Queight
 
     def conn
       @conn ||= Bunny.new(bunny_options).tap(&:start)
+    end
+
+    def transactional_connection_pool
+      @tx_connection_pool ||= HotTub::Pool.new(pool_options) { build_wrapper }
     end
 
     def connection_pool
