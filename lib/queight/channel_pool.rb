@@ -1,5 +1,5 @@
 require "bunny"
-require "connection_pool"
+require "hot_tub"
 require "queight/channel_wrapper"
 
 module Queight
@@ -12,7 +12,7 @@ module Queight
     end
 
     def with_channel
-      connection_pool.with { |channel| yield(channel) }
+      connection_pool.run { |channel| yield(channel) }
     end
 
     def with_subscribe_channel(prefetch)
@@ -34,9 +34,7 @@ module Queight
     end
 
     def connection_pool
-      @connection_pool ||= ConnectionPool.new(connection_pool_options) do
-        build_wrapper
-      end
+      @connection_pool ||= HotTub::Pool.new(pool_options) { build_wrapper }
     end
 
     def build_wrapper
@@ -52,10 +50,16 @@ module Queight
       )
     end
 
-    def connection_pool_options
+    def pool_options
       {
-        :size => @options.fetch(:size, DEFAULT_POOL_SIZE),
+        :close => :close,
+        :size => pool_size,
+        :max_size => (pool_size * 3),
       }
+    end
+
+    def pool_size
+      @options.fetch(:size, DEFAULT_POOL_SIZE)
     end
   end
 end

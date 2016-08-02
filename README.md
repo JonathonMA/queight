@@ -92,12 +92,6 @@ client.subscribe(queue) do |channel, delivery_info, properties, payload|
 end
 ```
 
-### Known Issues
-
-This should *mostly* work on ruby 1.8.
-
-Unfortunately, the excellent `connection_pool` gem makes use of `Thread::MonitorVariable#wait` in a way that's not backwards-compatible with ruby 1.8. As long as the app doesn't have to block waiting for the pooled resource this code path isn't exercised, so the work around is to ensure your pool size is in excess of your concurrency. As a result it's not much of a connection pool on ruby 1.8. Funnily enough, our usage of threads in ruby 1.8 is limited as well so we should be ok.
-
 ## Development
 
 The `.env` file assumes a rabbitmq running on localhost with a username and password of guest. The provided docker-compose.yml let's you run one with:
