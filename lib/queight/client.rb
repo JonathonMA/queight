@@ -72,6 +72,10 @@ module Queight
       end
     end
 
+    def message_count(queue)
+      with_channel { |channel| queue.message_count(channel) }
+    end
+
     def delete_queue(queue)
       with_channel do |channel|
         queue.delete(channel)

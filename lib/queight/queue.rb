@@ -27,6 +27,10 @@ module Queight
       channel.queue(@name, queue_options)
     end
 
+    def message_count(channel)
+      queue(channel).message_count
+    end
+
     private
 
     def subscribe_options

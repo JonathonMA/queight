@@ -67,6 +67,10 @@ You can also publish to a queue directly (using the default exchange). This will
     client.publish_to_queue_without_transaction(message, queue)
     client.publish_to_queue!(message, queue)
 
+Queue size can be queried:
+
+    client.message_count(queue)
+
 ### Publishing to a topic exchange
 
 ```ruby
