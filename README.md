@@ -59,6 +59,13 @@ Then you can just publish messages using the client and the exchange:
 Note that publishing uses transactions by default (slow!), so if you're ok with messages hitting the floor and not knowing about it, try:
 
     client.publish_without_transaction(topic_exchange, "message", "routing.key")
+    client.publish!(topic_exchange, "message", "routing.key")
+
+You can also publish to a queue directly (using the default exchange). This will ensure the queue is declared before publishing:
+
+    client.publish_to_queue(message, queue)
+    client.publish_to_queue_without_transaction(message, queue)
+    client.publish_to_queue!(message, queue)
 
 ### Publishing to a topic exchange
 
@@ -116,7 +123,7 @@ To install this gem onto your local machine, run `bundle exec rake install`. To 
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/queight. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [Contributor Covenant](contributor-covenant.org) code of conduct.
+Bug reports and pull requests are welcome on GitHub at https://github.com/JonathonMA/queight. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [Contributor Covenant](contributor-covenant.org) code of conduct.
 
 
 ## License
