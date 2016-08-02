@@ -31,6 +31,10 @@ module Queight
       queue(channel).message_count
     end
 
+    def purge(channel)
+      queue(channel).purge
+    end
+
     private
 
     def subscribe_options

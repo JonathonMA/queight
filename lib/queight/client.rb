@@ -82,6 +82,10 @@ module Queight
       end
     end
 
+    def purge(queue)
+      with_channel { |channel| queue.purge(channel) }
+    end
+
     def delete_exchange(exchange)
       with_channel do |channel|
         exchange.delete(channel)

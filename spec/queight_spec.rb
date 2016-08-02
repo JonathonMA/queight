@@ -200,4 +200,20 @@ describe Queight do
 
     expect(client.message_count(queue)).to eq 1
   end
+
+  it "#purge purges a queue" do
+    queue_name = "test.queue.message_count"
+    queue = test_helper.queue(Queight.queue(queue_name))
+
+    expect(client.message_count(queue)).to eq 0
+
+    5.times { client.publish_to_queue!(message(:foo => "bar"), queue) }
+    test_helper.wait_for_messages(queue)
+
+    expect(client.message_count(queue)).to eq 5
+
+    client.purge(queue)
+
+    expect(client.message_count(queue)).to eq 0
+  end
 end
