@@ -14,3 +14,7 @@ Style/HashSyntax:
 # 1.8 compatible :(
 Style/TrailingCommaInArguments:
   EnforcedStyleForMultiline: no_comma
+
+# 1.8 compatible :(
+Style/NumericPredicate:
+  Enabled: false
