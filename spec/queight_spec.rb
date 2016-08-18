@@ -216,4 +216,36 @@ describe Queight do
 
     expect(client.message_count(queue)).to eq 0
   end
+
+  it "has cancellable consumers" do
+    queue_name = "test.queue.cancellable_consumer"
+    queue = test_helper.queue(Queight.queue(queue_name))
+    message = message(:foo => "bar")
+
+    client.publish_to_queue!(message, queue)
+    test_helper.wait_for_messages(queue)
+
+    initial_thread_count = Thread.list.size
+
+    buf = []
+    subscriber = client.subscribe_non_blocking(queue) \
+      do |channel, delivery_info, props, payload|
+        metadata = Queight::Metadata.new(channel, delivery_info, props)
+        buf << payload
+        metadata.ack
+      end
+
+    expect(Thread.list.size).to eq(initial_thread_count + 1)
+
+    loop do
+      break if buf.size == 1
+      sleep 0.001
+    end
+
+    expect(buf).to eq [message]
+
+    subscriber.cancel
+
+    expect(Thread.list.size).to eq initial_thread_count
+  end
 end

@@ -12,9 +12,9 @@ module Queight
       queue(channel)
     end
 
-    def subscribe(channel)
+    def subscribe(channel, options = {})
       queue = queue(channel)
-      queue.subscribe(subscribe_options) do |*args|
+      queue.subscribe(subscribe_options(options)) do |*args|
         yield(channel, *args)
       end
     end
@@ -37,11 +37,11 @@ module Queight
 
     private
 
-    def subscribe_options
+    def subscribe_options(options)
       {
         :block => true,
         :manual_ack => true,
-      }
+      }.merge(options)
     end
 
     def queue_options

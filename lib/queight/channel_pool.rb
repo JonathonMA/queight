@@ -20,11 +20,17 @@ module Queight
     end
 
     def with_subscribe_channel(prefetch)
-      channel = conn.create_channel
-      channel.prefetch(prefetch)
+      channel = create_channel(prefetch)
       yield(channel)
     ensure
       channel.close
+    end
+
+    def create_channel(prefetch = nil)
+      channel = conn.create_channel
+      channel.prefetch(prefetch) if prefetch
+
+      channel
     end
 
     def reset_cache!

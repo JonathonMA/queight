@@ -1,3 +1,5 @@
+require "queight/cancellable_subscriber"
+
 module Queight
   class Client
     PublishFailure = Class.new(StandardError)
@@ -64,6 +66,14 @@ module Queight
       with_subscribe_channel(prefetch) do |channel|
         queue.subscribe(channel, &block)
       end
+    end
+
+    def subscribe_non_blocking(queue, prefetch = 1, &block)
+      channel = @channel_pool.create_channel(prefetch)
+      channel.prefetch(prefetch)
+      consumer = queue.subscribe(channel, :block => false, &block)
+
+      CancellableSubscriber.new(channel, consumer)
     end
 
     def bind(exchange, queue)
